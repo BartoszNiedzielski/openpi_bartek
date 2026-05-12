@@ -482,7 +482,7 @@ class LeRobotPandaPosDataConfig(DataConfigFactory):
         # joint positions instead of velocity
         data_transforms = _transforms.Group(
             inputs=[droid_policy.DroidInputs(model_type=model_config.model_type)],
-            outputs=[droid_policy.DroidOutputs(action_type="joint_position")], 
+            outputs=[droid_policy.DroidOutputs()], 
         )
         model_transforms = ModelTransformFactory()(model_config)
 
