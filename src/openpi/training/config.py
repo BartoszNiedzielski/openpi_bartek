@@ -957,7 +957,7 @@ _CONFIGS = [
             action_horizon=16,
         ),
         data=LeRobotPandaPosDataConfig(
-            repo_id="", # Uzupełnisz w terminalu flagą --data.repo-id
+            repo_id="bartek-niedzielski/panda_pick_and_place_40", # Uzupełnisz w terminalu flagą --data.repo-id
             base_config=DataConfig(prompt_from_task=True),
             assets=AssetsConfig(
                 assets_dir="gs://openpi-assets/checkpoints/pi05_droid/assets",
