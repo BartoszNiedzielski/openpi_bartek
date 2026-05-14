@@ -935,7 +935,7 @@ _CONFIGS = [
         ),
         data=LeRobotDROIDDataConfig(
             # Replace with your custom DROID LeRobot dataset repo id.
-            repo_id="bartek-niedzielski/panda_pick_and_place_21_velocity",
+            repo_id="bartek-niedzielski/panda_pick_and_place_10_velocity",
             base_config=DataConfig(prompt_from_task=True),
             assets=AssetsConfig(
                 # Important: reuse the original DROID norm stats during fine-tuning!
