@@ -969,13 +969,17 @@ _CONFIGS = [
     ),
     TrainConfig(
         name="pi05_panda_vel_finetune",
+        
+        # 1. Tell the model to use LoRA variants
         model=pi0_config.Pi0Config(
             pi05=True,
             action_dim=32,
             action_horizon=16,
+            paligemma_variant="gemma_2b_lora",
+            action_expert_variant="gemma_300m_lora"
         ),
+        
         data=LeRobotDROIDDataConfig(
-            # Default dataset (can still be overwritten by CLI)
             repo_id="bartek-niedzielski/panda_pick_and_place_110", 
             base_config=DataConfig(prompt_from_task=True),
             assets=AssetsConfig(
@@ -985,14 +989,22 @@ _CONFIGS = [
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_droid/params"),
         
-        # --- THE OPTIMIZED SCHEDULE ---
         lr_schedule=_optimizer.CosineDecaySchedule(
-            warmup_steps=100,       # Ramp up for the first 100 steps
-            peak_lr=2.5e-5,         # Hit maximum learning rate
-            decay_steps=1000,       # Decay smoothly over the full run
-            decay_lr=0.0,           # Settle all the way to 0 for maximum stability
+            warmup_steps=100,       
+            peak_lr=2.5e-5,         
+            decay_steps=1000,       
+            decay_lr=0.0,           
         ),
-        # ------------------------------
+        
+        # 2. Tell the trainer exactly which weights to freeze using the LoRA config
+        freeze_filter=pi0_config.Pi0Config(
+            pi05=True,
+            paligemma_variant="gemma_2b_lora", 
+            action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+        
+        # 3. Turn off EMA (Exponential Moving Average) as it clashes with LoRA training
+        ema_decay=None,
         
         num_train_steps=1000,
         batch_size=8,
