@@ -967,6 +967,36 @@ _CONFIGS = [
         num_train_steps=1000,
         batch_size=8,
     ),
+    TrainConfig(
+        name="pi05_panda_vel_finetune",
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            action_dim=32,
+            action_horizon=16,
+        ),
+        data=LeRobotDROIDDataConfig(
+            # Default dataset (can still be overwritten by CLI)
+            repo_id="bartek-niedzielski/panda_pick_and_place_110", 
+            base_config=DataConfig(prompt_from_task=True),
+            assets=AssetsConfig(
+                assets_dir="gs://openpi-assets/checkpoints/pi05_droid/assets",
+                asset_id="droid",
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_droid/params"),
+        
+        # --- THE OPTIMIZED SCHEDULE ---
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=100,       # Ramp up for the first 100 steps
+            peak_lr=2.5e-5,         # Hit maximum learning rate
+            decay_steps=1000,       # Decay smoothly over the full run
+            decay_lr=0.0,           # Settle all the way to 0 for maximum stability
+        ),
+        # ------------------------------
+        
+        num_train_steps=1000,
+        batch_size=8,
+    ),
     #
     # ALOHA Sim configs. This config is used to demonstrate how to train on a simple simulated environment.
     #
